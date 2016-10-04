@@ -2,6 +2,8 @@ package de.tqs;
 
 import de.tqs.storage.StorageFileNotFoundException;
 import de.tqs.storage.StorageService;
+import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -62,6 +64,18 @@ public class FileUploadController {
         return "redirect:/";
     }
 
+    @DeleteMapping("/")
+    @ApiOperation(value = "Löscht die Dateien aus dem Verzeichnis.",
+    notes = "Es wird das gesamte Verzeichnis gelöscht und anschließend neu angelegt.",
+    code = 204)
+    public String deleteUploadedFile() {
+
+        storageService.deleteAll();
+        storageService.init();
+
+        return "redirect:/";
+    }
+    
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();

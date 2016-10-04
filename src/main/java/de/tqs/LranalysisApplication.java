@@ -30,7 +30,7 @@ public class LranalysisApplication {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .pathMapping("/greeting");
+                .pathMapping("/");
     }
 	
 	@Bean
