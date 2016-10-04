@@ -29,6 +29,8 @@ public class FileUploadController {
     }
 
     @GetMapping("/")
+    @ApiOperation(value = "Zeigt eine Liste aller Hochgeladenen Dateien.",
+    notes = "")
     public String listUploadedFiles(Model model) throws IOException {
 
         model.addAttribute("files", storageService
@@ -43,6 +45,8 @@ public class FileUploadController {
     }
 
     @GetMapping("/files/{filename:.+}")
+    @ApiOperation(value = "Zeigt Details zur angegebenen Datei.",
+    notes = "")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
 
@@ -54,6 +58,8 @@ public class FileUploadController {
     }
 
     @PostMapping("/")
+    @ApiOperation(value = "Datei Upload in das Server Verzeichnis.",
+    notes = "")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 
@@ -65,9 +71,8 @@ public class FileUploadController {
     }
 
     @DeleteMapping("/")
-    @ApiOperation(value = "Löscht die Dateien aus dem Verzeichnis.",
-    notes = "Es wird das gesamte Verzeichnis gelöscht und anschließend neu angelegt.",
-    code = 204)
+    @ApiOperation(value = "Löscht die Dateien aus dem Upload-Verzeichnis.",
+    notes = "Es wird das gesamte Verzeichnis gelöscht und anschließend neu angelegt.")
     public String deleteUploadedFile() {
 
         storageService.deleteAll();
