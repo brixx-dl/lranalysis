@@ -1,0 +1,8 @@
+---
+applications:
+- name: lranalysis
+  memory: 512M
+  buildpack: java_buildpack
+  domain: cfapps.io
+  services:
+    - lranalysis-mysql
