@@ -29,7 +29,7 @@ public class ExcelReading {
 		InputStream inp = null;
         try {
            
-        	String dir = "upload-dir\\";
+        	String dir = "files//";
         	String file2 = file;
         	String filename = dir + file2;
 			inp = new FileInputStream(filename);
