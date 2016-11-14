@@ -1,13 +1,14 @@
 package de.tqs;
 
+import de.tqs.storage.StorageProperties;
+import de.tqs.storage.StorageService;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import de.tqs.storage.StorageProperties;
-import de.tqs.storage.StorageService;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
