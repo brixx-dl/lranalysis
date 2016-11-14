@@ -29,8 +29,7 @@ public class FileUploadController {
     }
 
     @GetMapping("/files")
-    @ApiOperation(value = "Zeigt eine Liste aller Hochgeladenen Dateien.",
-    notes = "")
+    @ApiOperation(value = "Zeigt eine Liste aller Hochgeladenen Dateien.",notes = "")
     public String listUploadedFiles(Model model) throws IOException {
 
         model.addAttribute("files", storageService

@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataSourceConfig {
 
-	@Configuration
+	//@Configuration
 	public class MySQLCloudConfig extends AbstractCloudConfig {
 
-	@Bean
+	//@Bean
 	public DataSource dataSource() {
 	  return connectionFactory().dataSource();
 	}
