@@ -18,11 +18,21 @@ import de.tqs.excelread.ExcelReading;
 
 @Controller
 @ComponentScan("xlsread")
+
 public class XlsReadController {
 
-	@GetMapping(value="/xlsRead")
+	//Auslesen der VUser
+	@GetMapping(value="/VUserRead")
 	@ResponseBody
-	public void xlsRead(@RequestParam("file")String filename){
+	public void VUserRead(@RequestParam("file")String filename){
+	
+		ExcelReading.ExcelStream(filename);
+			}	
+	
+	//Auslesen der Messergebnisse
+	@GetMapping(value="/MeasureRead")
+	@ResponseBody
+	public void MeasureRead(@RequestParam("file")String filename){
 	
 		ExcelReading.ExcelStream(filename);
 			}	
