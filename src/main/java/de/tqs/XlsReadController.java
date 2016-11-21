@@ -12,29 +12,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.tqs.excelread.ExcelReading;
 
-
-
-
-
 @Controller
 @ComponentScan("xlsread")
 
 public class XlsReadController {
 
-	//Auslesen der VUser
-	@GetMapping(value="/VUserRead")
+	// Auslesen der VUser
+	@GetMapping(value = "/VUserRead")
 	@ResponseBody
-	public void VUserRead(@RequestParam("file")String filename){
-	
-		ExcelReading.ExcelStream(filename);
-			}	
-	
-	//Auslesen der Messergebnisse
-	@GetMapping(value="/MeasureRead")
-	@ResponseBody
-	public void MeasureRead(@RequestParam("file")String filename){
-	
-		ExcelReading.ExcelStream(filename);
-			}	
-	
+	public void VUserRead(@RequestParam("Dateiname-VUser") String filenvuser,
+			@RequestParam("Dateiname-Results") String fileresults, @RequestParam("Plateau") Integer plateau) {
+
+		ExcelReading.ExcelStream(filenvuser, fileresults, plateau);
+	}
+
 }
