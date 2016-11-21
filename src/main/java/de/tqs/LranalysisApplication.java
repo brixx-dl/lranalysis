@@ -23,23 +23,19 @@ public class LranalysisApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LranalysisApplication.class, args);
 	}
-	
+
 	@Bean
-    public Docket swaggerSettings() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build()
-                .pathMapping("/");
-    }
-	
+	public Docket swaggerSettings() {
+		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any()).build().pathMapping("/");
+	}
+
 	@Bean
 	CommandLineRunner init(StorageService storageService) {
 		return (args) -> {
-            storageService.deleteAll();
-            storageService.init();
+			storageService.deleteAll();
+			storageService.init();
 		};
 	}
-	
+
 }

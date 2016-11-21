@@ -21,68 +21,62 @@ import java.util.stream.Collectors;
 @Controller
 public class FileUploadController {
 
-    private final StorageService storageService;
+	private final StorageService storageService;
 
-    @Autowired
-    public FileUploadController(StorageService storageService) {
-        this.storageService = storageService;
-    }
+	@Autowired
+	public FileUploadController(StorageService storageService) {
+		this.storageService = storageService;
+	}
 
-    @GetMapping("/files")
-    @ApiOperation(value = "Zeigt eine Liste aller Hochgeladenen Dateien.",notes = "")
-    public String listUploadedFiles(Model model) throws IOException {
+	@GetMapping("/files")
+	@ApiOperation(value = "Zeigt eine Liste aller Hochgeladenen Dateien.", notes = "")
+	public String listUploadedFiles(Model model) throws IOException {
 
-        model.addAttribute("files", storageService
-                .loadAll()
-                .map(path ->
-                        MvcUriComponentsBuilder
-                                .fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
-                                .build().toString())
-                .collect(Collectors.toList()));
+		model.addAttribute("files",
+				storageService.loadAll()
+						.map(path -> MvcUriComponentsBuilder
+								.fromMethodName(FileUploadController.class, "serveFile", path.getFileName().toString())
+								.build().toString())
+						.collect(Collectors.toList()));
 
-        return "uploadForm";
-    }
+		return "uploadForm";
+	}
 
-    @GetMapping("/files/{filename:.+}")
-    @ApiOperation(value = "Zeigt Details zur angegebenen Datei.",
-    notes = "")
-    @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+	@GetMapping("/files/{filename:.+}")
+	@ApiOperation(value = "Zeigt Details zur angegebenen Datei.", notes = "")
+	@ResponseBody
+	public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
 
-        Resource file = storageService.loadAsResource(filename);
-        return ResponseEntity
-                .ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+file.getFilename()+"\"")
-                .body(file);
-    }
+		Resource file = storageService.loadAsResource(filename);
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+				.body(file);
+	}
 
-    @PostMapping("/files")
-    @ApiOperation(value = "Datei Upload in das Server Verzeichnis.",
-    notes = "")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
-                                   RedirectAttributes redirectAttributes) {
+	@PostMapping("/files")
+	@ApiOperation(value = "Datei Upload in das Server Verzeichnis.", notes = "")
+	public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
-        storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+		storageService.store(file);
+		redirectAttributes.addFlashAttribute("message",
+				"You successfully uploaded " + file.getOriginalFilename() + "!");
 
-        return "redirect:/";
-    }
+		return "redirect:/";
+	}
 
-    @DeleteMapping("/files")
-    @ApiOperation(value = "Löscht die Dateien aus dem Upload-Verzeichnis.",
-    notes = "Es wird das gesamte Verzeichnis gelöscht und anschließend neu angelegt.")
-    public String deleteUploadedFile() {
+	@DeleteMapping("/files")
+	@ApiOperation(value = "Löscht die Dateien aus dem Upload-Verzeichnis.", notes = "Es wird das gesamte Verzeichnis gelöscht und anschließend neu angelegt.")
+	public String deleteUploadedFile() {
 
-        storageService.deleteAll();
-        storageService.init();
+		storageService.deleteAll();
+		storageService.init();
 
-        return "redirect:/";
-    }
-    
-    @ExceptionHandler(StorageFileNotFoundException.class)
-    public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {
-        return ResponseEntity.notFound().build();
-    }
+		return "redirect:/";
+	}
+
+	@ExceptionHandler(StorageFileNotFoundException.class)
+	public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {
+		return ResponseEntity.notFound().build();
+	}
 
 }
