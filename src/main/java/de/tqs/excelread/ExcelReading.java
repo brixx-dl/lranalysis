@@ -3,6 +3,8 @@
  */
 package de.tqs.excelread;
 
+import  de.tqs.models.TqsMath;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,7 +20,10 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
@@ -83,7 +88,7 @@ public class ExcelReading {
 
 	}
 
-	public static void vuserRead(Sheet sheet) {
+	public static TreeMap vuserRead(Sheet sheet) {
 
 		Row row = null;
 		TreeMap<Integer, String> vuserTM = new TreeMap<Integer, String>();
@@ -117,10 +122,11 @@ public class ExcelReading {
 			System.out.print(me.getKey() + ": ");
 			System.out.println(me.getValue());
 		}
-		System.out.println();
+		
+		return vuserTM;
 	}
 
-	public static void resultRead(Sheet sheet) {
+	public static TreeMap resultRead(Sheet sheet) {
 		Row row = null;
 		TreeMap<Integer, String> resultTM = new TreeMap<Integer, String>();
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -200,7 +206,7 @@ public class ExcelReading {
 				}
 			*/	
 				SortedMap<Integer, String> sortedMap = resultTM.subMap(2700,5400);
-				System.out.println(sortedMap.values());
+				//System.out.println(sortedMap.values());
 				
 				Collection<String> values = sortedMap.values();
 				ArrayList<String> val = new ArrayList<String>(values);
@@ -215,7 +221,36 @@ public class ExcelReading {
 					stats.addValue(value);
 					
 				}
-				System.out.println(stats.getMean());
+				System.out.println("Min" + stats.getMin());
+				System.out.println("Max" + stats.getMax());
+				System.out.println("StdAbw" + stats.getStandardDeviation());
+				System.out.println("N" + stats.getN());
+				
+				System.out.println("Perc 75%" + stats.getPercentile(75));
+				System.out.println("Perc 90%" + stats.getPercentile(90));
+				
+				 // Calculate 95% confidence interval
+		        double ci = calcMeanCI(stats, 0.95);
+		        System.out.println(String.format("Mean: %f", stats.getMean()));
+		        System.out.println(ci);
+		        double lower = stats.getMean() - ci;
+		        double upper = stats.getMean() + ci;
+		        System.out.println(String.format("Confidence Interval 95%%: %f, %f", lower, upper));
+				
+				return resultTM;
 	}
 
+	private static double calcMeanCI(DescriptiveStatistics stats, double level) {
+        try {
+            // Create T Distribution with N-1 degrees of freedom
+            TDistribution tDist = new TDistribution(stats.getN() - 1);
+            // Calculate critical value
+            double critVal = tDist.inverseCumulativeProbability(1.0 - (1 - level) / 2);
+            // Calculate confidence interval
+            return critVal * stats.getStandardDeviation() / Math.sqrt(stats.getN());
+        } catch (MathIllegalArgumentException e) {
+            return Double.NaN;
+        }
+    }
+	
 }
