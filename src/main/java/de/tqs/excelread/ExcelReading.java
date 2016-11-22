@@ -8,16 +8,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
@@ -85,7 +86,7 @@ public class ExcelReading {
 	public static void vuserRead(Sheet sheet) {
 
 		Row row = null;
-		TreeMap<Integer, String> tm = new TreeMap<Integer, String>();
+		TreeMap<Integer, String> vuserTM = new TreeMap<Integer, String>();
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 
 			// Zeile der Arbeitsmappe
@@ -101,11 +102,11 @@ public class ExcelReading {
 
 			int intTime = (intHour * 60 + intMin) * 60;
 
-			tm.put(intTime, cell2.getStringCellValue());
+			vuserTM.put(intTime, cell2.getStringCellValue());
 
 		}
 		// Liste der Eintraege
-		Set<Entry<Integer, String>> set = tm.entrySet();
+		Set<Entry<Integer, String>> set = vuserTM.entrySet();
 
 		// Erzeugen eines Iterator
 		Iterator<Entry<Integer, String>> i = set.iterator();
@@ -121,89 +122,100 @@ public class ExcelReading {
 
 	public static void resultRead(Sheet sheet) {
 		Row row = null;
-		TreeMap<Integer, String> tm = new TreeMap<Integer, String>();
+		TreeMap<Integer, String> resultTM = new TreeMap<Integer, String>();
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			// Zeile der Arbeitsmappe
 			row = sheet.getRow(i);
 			// Jede Zeile einzeln wird durchgegangen
-		
+
 			Cell cell = row.getCell(0);
 			String strKey = cell.getStringCellValue();
 			String regKey = "\\.+";
 			String[] resKey = strKey.split(regKey);
 			strKey = resKey[0];
 			strKey = strKey.replace(",", "");
-			
+
 			int Key = Integer.parseInt(strKey);
-		
+
 			List<String> listValue = new ArrayList<String>();
 			Cell cell2 = row.getCell(1);
-			
-			//listValue.add(cell2.getStringCellValue());
+
+			// listValue.add(cell2.getStringCellValue());
 			String strValue = cell2.getStringCellValue();
 			String regValue = "\\.+";
-			
-			//System.out.println(listValue);
-			
+
+			// System.out.println(listValue);
+
 			String[] resValue = strValue.split(regValue);
-			//System.out.println(Arrays.deepToString(resValue));
-		
-			
-			
-			
+			// System.out.println(Arrays.deepToString(resValue));
+
 			int arrayLength = resValue.length;
-	//		System.out.println(arrayLength);
-			
-			 if (arrayLength == 1)
-			 {
-			
-				 listValue.add(resValue[0]+"000");
-			
-			//	 resValue[1] = "000";
-			 }
-				 
-			 if (arrayLength == 2)
-			 {
-		    String strValueSek = resValue[0];
-			String strValueMil = resValue[1];
-			Integer lengValueMil = strValueMil.length();
-			
-			 
-		        switch (lengValueMil) {
-		            case 1:  strValueMil = strValueMil + "00";
-		                     break;
-		            case 2:  strValueMil = strValueMil + "0";
-		                     break;
-		                     
-		        }
-		        String strValue2 = strValueSek + strValueMil;
-		        listValue.add(strValue2);
-	//			System.out.println(listValue);
-		      	        
+			// System.out.println(arrayLength);
+
+			if (arrayLength == 1) {
+
+				listValue.add(resValue[0] + "000");
+
+				// resValue[1] = "000";
 			}
-			  
+
+			if (arrayLength == 2) {
+				String strValueSek = resValue[0];
+				String strValueMil = resValue[1];
+				Integer lengValueMil = strValueMil.length();
+
+				switch (lengValueMil) {
+				case 1:
+					strValueMil = strValueMil + "00";
+					break;
+				case 2:
+					strValueMil = strValueMil + "0";
+					break;
+
+				}
+				String strValue2 = strValueSek + strValueMil;
+				listValue.add(strValue2);
+				// System.out.println(listValue);
+
+			}
+
 			String test = listValue.get(0);
-		//	System.out.println(test);
-			 tm.put(Key, test);
-			//tm.put(Key, cell2.getStringCellValue());
-			
+			// System.out.println(test);
+			resultTM.put(Key, test);
+			// tm.put(Key, cell2.getStringCellValue());
+
 		}
+		/*
 		// Liste der Eintraege
-		Set<Entry<Integer, String>> set = tm.entrySet();
+				Set<Entry<Integer, String>> set2 = resultTM.entrySet();
 
-		// Erzeugen eines Iterator
-		Iterator<Entry<Integer, String>> i = set.iterator();
+				// Erzeugen eines Iterator
+				Iterator<Entry<Integer, String>> i2 = set2.iterator();
 
-		// Anzeigen aller Elemente
-		while (i.hasNext()) {
-			Entry<Integer, String> me = i.next();
-			System.out.print(me.getKey() + ": ");
-			System.out.println(me.getValue());
-		}
-			
-			//System.out.println();
-		}
-
+				// Anzeigen aller Elemente
+				while (i2.hasNext()) {
+					Entry<Integer, String> me = i2.next();
+					System.out.print(me.getKey() + ": ");
+					System.out.println(me.getValue());
+				}
+			*/	
+				SortedMap<Integer, String> sortedMap = resultTM.subMap(2700,5400);
+				System.out.println(sortedMap.values());
+				
+				Collection<String> values = sortedMap.values();
+				ArrayList<String> val = new ArrayList<String>(values);
+				
+				DescriptiveStatistics stats = new DescriptiveStatistics();
+				
+							
+				for (int h = 0;h<val.size();h++){
+				
+					String test = val.get(h);
+					double value = Double.parseDouble(test);
+					stats.addValue(value);
+					
+				}
+				System.out.println(stats.getMean());
 	}
 
-
+}
