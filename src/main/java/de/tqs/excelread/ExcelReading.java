@@ -3,15 +3,11 @@
  */
 package de.tqs.excelread;
 
-import  de.tqs.models.TqsMath;
-import springfox.documentation.spring.web.json.Json;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -22,19 +18,15 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ws.rs.Produces;
-
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.boot.jackson.JsonObjectSerializer;
 
 public class ExcelReading {
 
@@ -51,10 +43,10 @@ public class ExcelReading {
 
 		InputStream inpvuser = null;
 		InputStream inpresults = null;
-		StringBuilder ResponseString = new StringBuilder(); 
+		StringBuilder ResponseString = new StringBuilder();
 		ResponseString.append("Lasttest Auswertung");
 		ResponseString.append("\n");
-				
+
 		try {
 
 			String dir = "files//";
@@ -67,49 +59,24 @@ public class ExcelReading {
 			inpresults = new FileInputStream(filenameresults);
 			Workbook wbResults = WorkbookFactory.create(inpresults);
 
-			
-			int[] test = vuserRead(wbVuser.getSheetAt(0)); 
+			int[] test = vuserRead(wbVuser.getSheetAt(0));
 
 			int panfang = 0;
 			int pende = 0;
-			int size = test.length-1;
-			
+			int size = test.length - 1;
 			int j = 0;
 			int plateau = 0;
-			
-			
-			
-			do
-			{			
-				plateau = j+1;
+
+			do {
+				plateau = j + 1;
 				panfang = test[j];
-				pende = test[j+1];
-						
-				ResponseString.append(resultRead(wbResults.getSheetAt(0),plateau,panfang,pende));
-				
+				pende = test[j + 1];
+
+				ResponseString.append(resultRead(wbResults.getSheetAt(0), plateau, panfang, pende));
+
 				j++;
-			}
-			while(j < size);
-			
-			
-			
-			
-			
-			/*
-			for (int i = 0; i < wbVuser.getNumberOfSheets(); i++) {
-				// System.out.println(wb.getSheetAt(i).getSheetName());
+			} while (j < size);
 
-				vuserRead(wbVuser.getSheetAt(i));
-
-			}
-
-			for (int i = 0; i < wbResults.getNumberOfSheets(); i++) {
-				// System.out.println(wb.getSheetAt(i).getSheetName());
-
-				resultRead(wbResults.getSheetAt(i));
-
-			}
-			*/
 		} catch (InvalidFormatException ex) {
 			Logger.getLogger(ExcelReading.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (FileNotFoundException ex) {
@@ -125,7 +92,6 @@ public class ExcelReading {
 			}
 		}
 		return ResponseString;
-
 
 	}
 
@@ -153,44 +119,24 @@ public class ExcelReading {
 		}
 		int count = 0;
 		int iter = 0;
-		
+
 		int[] plateauArray;
 		plateauArray = new int[vuserTM.size()];
-		
+
 		Set<Entry<Integer, String>> set = vuserTM.entrySet();
 		Iterator<Entry<Integer, String>> i = set.iterator();
 		while (i.hasNext()) {
 			Entry<Integer, String> me = i.next();
 			count = me.getKey();
-			//System.out.print(plateau);
 			plateauArray[iter] = count;
 			iter++;
 		}
-		//System.out.print(Arrays.toString(plateauArray));
-		
-		//resultRead(sheet,plateau);
+
 		return plateauArray;
-		
-		/*
-		// Liste der Eintraege
-		Set<Entry<Integer, String>> set = vuserTM.entrySet();
 
-		// Erzeugen eines Iterator
-		Iterator<Entry<Integer, String>> i = set.iterator();
-
-		// Anzeigen aller Elemente
-		while (i.hasNext()) {
-			Entry<Integer, String> me = i.next();
-			System.out.print(me.getKey() + ": ");
-			System.out.println(me.getValue());
-		}
-			return plateau;
-		
-		 * */
-	
 	}
 
-	public static String resultRead(Sheet sheet, Integer plateau ,Integer panfang, Integer pende) {
+	public static String resultRead(Sheet sheet, Integer plateau, Integer panfang, Integer pende) {
 		Row row = null;
 		TreeMap<Integer, String> resultTM = new TreeMap<Integer, String>();
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -250,99 +196,60 @@ public class ExcelReading {
 			}
 
 			String test = listValue.get(0);
-			// System.out.println(test);
 			resultTM.put(Key, test);
-			// tm.put(Key, cell2.getStringCellValue());
 
 		}
-		/*
-		// Liste der Eintraege
-				Set<Entry<Integer, String>> set2 = resultTM.entrySet();
 
-				// Erzeugen eines Iterator
-				Iterator<Entry<Integer, String>> i2 = set2.iterator();
+		SortedMap<Integer, String> sortedMap = resultTM.subMap(panfang, pende);
 
-				// Anzeigen aller Elemente
-				while (i2.hasNext()) {
-					Entry<Integer, String> me = i2.next();
-					System.out.print(me.getKey() + ": ");
-					System.out.println(me.getValue());
-				}
-			*/	
-				
-				SortedMap<Integer, String> sortedMap = resultTM.subMap(panfang,pende);
-				//System.out.println(sortedMap.values());
-				
-				Collection<String> values = sortedMap.values();
-				ArrayList<String> val = new ArrayList<String>(values);
-				
-				DescriptiveStatistics stats = new DescriptiveStatistics();
-				
-							
-				for (int h = 0;h<val.size();h++){
-				
-					String test = val.get(h);
-					double value = Double.parseDouble(test);
-					stats.addValue(value);
-					
-				}
-				
-				String ResultResponseString = "\n";
-			
-		/*
-				System.out.println("Plateau: "  + plateau);
-				System.out.println("Antwortzeit Min: " + stats.getMin());
-				System.out.println("Antwortzeit Max: " + stats.getMax());
-				System.out.println("StdAbw: " + stats.getStandardDeviation());
-				System.out.println("Anzahl Messungen N: " + stats.getN());
-				
-				System.out.println("Percentile 75%: " + stats.getPercentile(75));
-				System.out.println("Percentile 90%: " + stats.getPercentile(90));
-				
-				 // Calculate 95% confidence interval
-		        double ci = calcMeanCI(stats, 0.95);
-		        System.out.println(String.format("Mean: %f", stats.getMean()));
-		        System.out.println(String.format("Confidence Interval 95%%: %f",ci));
-		        double lower = stats.getMean() - ci;
-		        double upper = stats.getMean() + ci;
-		        System.out.println(String.format("Confidence Interval 95%% min/max: %f, %f %n", lower, upper));
-		  */      
-		        
-		        ResultResponseString = ResultResponseString + "Plateau: "  + plateau + '\n';
-		        ResultResponseString = ResultResponseString + "Antwortzeit Min: " + stats.getMin() + "\n";
-		        ResultResponseString = ResultResponseString + "Antwortzeit Max: " + stats.getMax() + "\n";
-		        ResultResponseString = ResultResponseString + "StdAbw: " + stats.getStandardDeviation() + "\n";
-		        ResultResponseString = ResultResponseString + "Anzahl Messungen N: " + stats.getN() + "\n";
-				
-		        ResultResponseString = ResultResponseString + "Percentile 75%: " + stats.getPercentile(75) + "\n";
-		        ResultResponseString = ResultResponseString + "Percentile 90%: " + stats.getPercentile(90) + "\n";
-				
-				 // Calculate 95% confidence interval
-		        double ci = calcMeanCI(stats, 0.95);
-		        ResultResponseString = ResultResponseString + String.format("Mean: %f", stats.getMean()) + "\n";
-		        ResultResponseString = ResultResponseString + String.format("Confidence Interval 95%%: %f",ci) + "\n";
-		        double lower = stats.getMean() - ci;
-		        double upper = stats.getMean() + ci;
-		        ResultResponseString = ResultResponseString + String.format("Confidence Interval 95%% min/max: %f, %f %n", lower, upper) + "\n";
-		        
-				return ResultResponseString;
-  
-			 
-		        
-		      
+		Collection<String> values = sortedMap.values();
+		ArrayList<String> val = new ArrayList<String>(values);
+
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+
+		for (int h = 0; h < val.size(); h++) {
+
+			String test = val.get(h);
+			double value = Double.parseDouble(test);
+			stats.addValue(value);
+
+		}
+
+		String ResultResponseString = "\n";
+
+		ResultResponseString = ResultResponseString + "Plateau: " + plateau + '\n';
+		ResultResponseString = ResultResponseString + "Antwortzeit Min: " + stats.getMin() + "\n";
+		ResultResponseString = ResultResponseString + "Antwortzeit Max: " + stats.getMax() + "\n";
+		ResultResponseString = ResultResponseString + "StdAbw: " + stats.getStandardDeviation() + "\n";
+		ResultResponseString = ResultResponseString + "Anzahl Messungen N: " + stats.getN() + "\n";
+
+		ResultResponseString = ResultResponseString + "Percentile 75%: " + stats.getPercentile(75) + "\n";
+		ResultResponseString = ResultResponseString + "Percentile 90%: " + stats.getPercentile(90) + "\n";
+
+		// Calculate 95% confidence interval
+		double ci = calcMeanCI(stats, 0.95);
+		ResultResponseString = ResultResponseString + String.format("Mean: %f", stats.getMean()) + "\n";
+		ResultResponseString = ResultResponseString + String.format("Confidence Interval 95%%: %f", ci) + "\n";
+		double lower = stats.getMean() - ci;
+		double upper = stats.getMean() + ci;
+		ResultResponseString = ResultResponseString
+				+ String.format("Confidence Interval 95%% min/max: %f, %f %n", lower, upper) + "\n";
+
+		return ResultResponseString;
+
 	}
 
 	private static double calcMeanCI(DescriptiveStatistics stats, double level) {
-        try {
-            // Create T Distribution with N-1 degrees of freedom
-            TDistribution tDist = new TDistribution(stats.getN() - 1);
-            // Calculate critical value
-            double critVal = tDist.inverseCumulativeProbability(1.0 - (1 - level) / 2);
-            // Calculate confidence interval
-            return critVal * stats.getStandardDeviation() / Math.sqrt(stats.getN());
-        } catch (MathIllegalArgumentException e) {
-            return Double.NaN;
-        }
-    }
-	
+		try {
+
+			TDistribution tDist = new TDistribution(stats.getN() - 1);
+
+			double critVal = tDist.inverseCumulativeProbability(1.0 - (1 - level) / 2);
+
+			return critVal * stats.getStandardDeviation() / Math.sqrt(stats.getN());
+		} catch (MathIllegalArgumentException e) {
+			return Double.NaN;
+		}
+	}
+
 }

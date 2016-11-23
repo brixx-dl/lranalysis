@@ -25,20 +25,17 @@ import springfox.documentation.spring.web.json.Json;
 public class XlsReadController {
 
 	// Auslesen der VUser
-	//@GetMapping(value = "/VUserRead")
+	// @GetMapping(value = "/VUserRead")
 
 	@RequestMapping(value = "/getAnalyse", method = RequestMethod.GET, produces = "text/html")
-	
-	@ResponseBody
-	public StringBuilder getAnalyse(
-			@RequestParam("Dateiname-VUser") String filenvuser,
-			@RequestParam("Dateiname-Results") String fileresults) {
-	//ExcelReading.ExcelStream(filenvuser, fileresults);
 
-	 return ExcelReading.ExcelStream(filenvuser, fileresults);
-	
+	@ResponseBody
+	public StringBuilder getAnalyse(@RequestParam("Dateiname-VUser") String filenvuser,
+			@RequestParam("Dateiname-Results") String fileresults) {
+		// ExcelReading.ExcelStream(filenvuser, fileresults);
+
+		return ExcelReading.ExcelStream(filenvuser, fileresults);
+
 	}
 
-	
-	
 }
