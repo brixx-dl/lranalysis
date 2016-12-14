@@ -43,9 +43,9 @@ public class ExcelReading {
 
 		InputStream inpvuser = null;
 		InputStream inpresults = null;
-		StringBuilder ResponseString = new StringBuilder();
-		ResponseString.append("Lasttest Auswertung");
-		ResponseString.append("\n");
+		StringBuilder responsestring = new StringBuilder();
+		responsestring.append("Lasttest Auswertung");
+		responsestring.append("\n");
 
 		try {
 
@@ -72,26 +72,24 @@ public class ExcelReading {
 				panfang = test[j];
 				pende = test[j + 1];
 
-				ResponseString.append(resultRead(wbResults.getSheetAt(0), plateau, panfang, pende));
+				responsestring.append(resultRead(wbResults.getSheetAt(0), plateau, panfang, pende));
 
 				j++;
 			} while (j < size);
 
-		} catch (InvalidFormatException ex) {
+		} catch (InvalidFormatException | IOException ex) {
 			Logger.getLogger(ExcelReading.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(ExcelReading.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(ExcelReading.class.getName()).log(Level.SEVERE, null, ex);
+		
 		} finally {
 			try {
 				inpvuser.close();
 				inpresults.close();
+			
 			} catch (IOException ex) {
 				Logger.getLogger(ExcelReading.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		return ResponseString;
+		return responsestring;
 
 	}
 
@@ -156,23 +154,21 @@ public class ExcelReading {
 			List<String> listValue = new ArrayList<String>();
 			Cell cell2 = row.getCell(1);
 
-			// listValue.add(cell2.getStringCellValue());
 			String strValue = cell2.getStringCellValue();
 			String regValue = "\\.+";
 
-			// System.out.println(listValue);
 
 			String[] resValue = strValue.split(regValue);
-			// System.out.println(Arrays.deepToString(resValue));
+
 
 			int arrayLength = resValue.length;
-			// System.out.println(arrayLength);
+
 
 			if (arrayLength == 1) {
 
 				listValue.add(resValue[0] + "000");
 
-				// resValue[1] = "000";
+
 			}
 
 			if (arrayLength == 2) {
@@ -191,7 +187,6 @@ public class ExcelReading {
 				}
 				String strValue2 = strValueSek + strValueMil;
 				listValue.add(strValue2);
-				// System.out.println(listValue);
 
 			}
 
